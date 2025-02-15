@@ -37,37 +37,43 @@ typedef apex_integer priority_type;
 
 typedef enum
 {
-       dormant = 0,
-       ready = 1,
-       running = 2,
-       waiting = 3,
-       faulted = 4
+    dormant = 0,
+    ready = 1,
+    running = 2,
+    waiting = 3,
+    faulted = 4
 } process_state_type;
 
 typedef enum
 {
-       soft = 0,
-       hard = 1
+    soft = 0,
+    hard = 1
 } deadline_type;
 
 typedef struct
 {
-       system_time_type period;
-       system_time_type time_capacity;
-       system_address_type entry_point;
-       stack_size_type stack_size;
-       priority_type base_priority;
-       deadline_type deadline;
-       process_name_type name;
+    system_time_type period;
+    system_time_type time_capacity;
+    system_address_type entry_point;
+    stack_size_type stack_size;
+    priority_type base_priority;
+    deadline_type deadline;
+    process_name_type name;
 } process_attribute_type;
 
 typedef struct
 {
-       system_time_type deadline_time;
-       priority_type current_priority;
-       process_state_type process_state;
-       process_attribute_type attributes;
+    system_time_type deadline_time;
+    priority_type current_priority;
+    process_state_type process_state;
 } process_status_type;
+
+typedef struct
+{
+    process_status_type* processus_status;
+    process_attribute_type* attributes;
+    process_id_type process_id;
+} process_type;
 
 extern void create_process(
     /*in */ process_attribute_type *attributes,
