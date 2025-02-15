@@ -17,3 +17,4 @@
 #include <kernel/syscall.h>
 #include <stdarg.h>
 #include <arinc/ARINC_process.h>
+#include <arinc/ARINC_partition.h>

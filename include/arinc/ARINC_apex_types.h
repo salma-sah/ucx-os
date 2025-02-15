@@ -110,7 +110,8 @@ typedef apex_long_integer system_time_type;
 #define infinite_time_value -1
 
 typedef apex_integer processor_core_id_type;
+
+//TODO review type
 #define core_affinity_no_preference <implementation dependent>
 
 #endif
-
