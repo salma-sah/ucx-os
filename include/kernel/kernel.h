@@ -73,3 +73,11 @@ uint32_t ucx_ticks();
 uint64_t ucx_uptime();
 
 int32_t app_main();
+
+#ifdef ARINC
+struct arinc_s {
+	struct list_s *partitions;
+};
+
+extern struct arinc_s_type* arinc_s;
+#endif
