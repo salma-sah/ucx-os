@@ -74,6 +74,8 @@ void set_priority(process_id_type process_id, priority_type priority, return_cod
 
 void suspend_self(system_time_type time_out, return_code_type *return_code)
 {
+    uint16_t process_id = ucx_task_id();
+    ucx_task_suspend(process_id);
 }
 
 void suspend(process_id_type process_id, return_code_type *return_code)
@@ -84,6 +86,7 @@ void resume(process_id_type process_id, return_code_type *return_code)
 {
 }
 
+// TODO -Q équivalent à cancel ?
 void stop_self(void)
 {
 }
@@ -122,6 +125,7 @@ void get_process_status(process_id_type process_id, process_status_type *process
 
 void initialize_process_core_affinity(process_id_type process_id, processor_core_id_type processor_core_id, return_code_type *return_code)
 {
+    return_code = NO_ERROR;
 }
 
 void get_my_processor_core_id(processor_core_id_type *processor_core_id, return_code_type *return_code)
