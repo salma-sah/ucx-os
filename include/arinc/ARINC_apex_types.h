@@ -68,13 +68,13 @@ typedef unsigned long apex_native_unsigned;
 
 typedef enum
 {
-   no_error = 0,       /* request valid and operation performed      */
-   no_action = 1,      /* status of system unaffected by request     */
-   not_available = 2,  /* resource required by request unavailable   */
-   invalid_param = 3,  /* invalid parameter specified in request     */
-   invalid_config = 4, /* parameter incompatible with configuration  */
-   invalid_mode = 5,   /* request incompatible with current mode     */
-   timed_out = 6       /* time-out tied up with request has expired  */
+   NO_ERROR = 0,       /* request valid and operation performed      */
+   NO_ACTION = 1,      /* status of system unaffected by request     */
+   NOT_AVAILABLE = 2,  /* resource required by request unavailable   */
+   INVALID_PARAM = 3,  /* invalid parameter specified in request     */
+   INVALID_CONFIG = 4, /* parameter incompatible with configuration  */
+   INVALID_MODE = 5,   /* request incompatible with current mode     */
+   TIMED_OUT = 6       /* time-out tied up with request has expired  */
 } return_code_type;
 
 #define max_name_length 32

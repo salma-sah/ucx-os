@@ -37,11 +37,11 @@ typedef apex_integer priority_type;
 
 typedef enum
 {
-    dormant = 0,
-    ready = 1,
-    running = 2,
-    waiting = 3,
-    faulted = 4
+    DORMANT = (uint8_t)0,
+    READY = (uint8_t)1,
+    RUNNING = (uint8_t)2,
+    WAITING = (uint8_t)3,
+    FAULTED = (uint8_t)4
 } process_state_type;
 
 typedef enum
@@ -73,6 +73,7 @@ typedef struct
     process_status_type* processus_status;
     process_attribute_type* attributes;
     process_id_type process_id;
+    process_index_type process_index;
 } process_type;
 
 extern void create_process(

@@ -1,96 +1,133 @@
 #include <ucx.h>
+#include <limits.h>
 
-void create_process(process_attribute_type *attributes, process_id_type *process_id, return_code_type *return_code){
-    /*
-    system_time_type period;
-    system_time_type time_capacity;
-    system_address_type entry_point;
-    stack_size_type stack_size;
-    priority_type base_priority;
-    deadline_type deadline;
-    process_name_type name;
-    */
-   
-    /*
-    create a new process with the process attributes set to ATTRIBUTES; 
-    
-    set the process state to DORMANT; 
-    initialize process context, unique process index, and stack; 
-    set the process’s core affinity to the default process core affinity value; 
-    PROCESS_ID  := unique identifier assigned by the O/S to the created process; 
-    RETURN_CODE := NO_ERROR; 
-    
+static struct node_s *idcmp(struct node_s *node, void *id_arg)
+{
+    struct tcb_s *task = node->data;
+    uint16_t id = (size_t)id_arg;
+
+    if (task->id == id)
+        return node;
+    else
+        return 0;
+}
+
+void create_process(process_attribute_type *attributes, process_id_type *process_id, return_code_type *return_code)
+{
+    //1 TODO tenir compte des autres process de la partition
+
+    if (attributes->stack_size > UINT_MAX 
+        || attributes->base_priority < INT_MIN 
+        || attributes->base_priority > INT_MAX 
+        || attributes->period < LLONG_MIN
+        || attributes->period > LLONG_MAX
+        || attributes->time_capacity < LLONG_MIN
+        || attributes->time_capacity > LLONG_MAX){
+            return_code = INVALID_PARAM;
+            return;
+        }
+
+    if (attributes->time_capacity > attributes->period) {
+        return_code = INVALID_PARAM;
+        return;
+    }
+
+    // TODO -Q adapater avec entry point ?
+    void *task = malloc(sizeof(void));
 
     int32_t err_code = ucx_task_spawn(task, attributes->stack_size);
 
-    if (err_code == ERR_OK) {
-
+    if (err_code != ERR_OK) {
+        return_code = NOT_AVAILABLE;
+        return;
     }
-    */
 
-    
+    process_type *new_process = malloc(sizeof(process_type));
+    process_id = ucx_task_idref(task);
+
+    new_process->process_id = process_id;
+    new_process->attributes = attributes;
+
+    size_t index_next = kcb->id_next;
+    new_process->process_index = --index_next;
+
+    struct tcb_s *process_tcb = list_foreach(kcb->tasks, idcmp, (void *)(size_t)process_id)->data;
+
+    // TODO -Q revoir les conversions de types
+    process_tcb->priority = (uint16_t)attributes->base_priority;
+
+    //2 TODO -Q revoir attributs restants
+
+    process_status_type *process_status = malloc(sizeof(process_status_type));
+    process_status->process_state = DORMANT;
+    process_status->deadline_time = attributes->time_capacity;
+    process_status->current_priority = attributes->base_priority;
+    new_process->processus_status = process_status;
+
+    // TODO revoir process_core_id
+    initialize_process_core_affinity(process_id, return_code, 0);
 }
 
-void set_priority(process_id_type process_id, priority_type priority, return_code_type *return_code){
-
+void set_priority(process_id_type process_id, priority_type priority, return_code_type *return_code)
+{
 }
 
-void suspend_self(system_time_type time_out, return_code_type *return_code){
-
+void suspend_self(system_time_type time_out, return_code_type *return_code)
+{
 }
 
-void suspend(process_id_type process_id, return_code_type *return_code){
-
+void suspend(process_id_type process_id, return_code_type *return_code)
+{
 }
 
-void resume(process_id_type process_id, return_code_type *return_code){
-
+void resume(process_id_type process_id, return_code_type *return_code)
+{
 }
 
-void stop_self(void){
-
+void stop_self(void)
+{
 }
 
-void stop(process_id_type process_id, return_code_type *return_code){
-
+void stop(process_id_type process_id, return_code_type *return_code)
+{
 }
 
-void start(process_id_type process_id, return_code_type *return_code){
-
+void start(process_id_type process_id, return_code_type *return_code)
+{
 }
 
-void delayed_start(process_id_type process_id, system_time_type delay_time, return_code_type *return_code){
-
+void delayed_start(process_id_type process_id, system_time_type delay_time, return_code_type *return_code)
+{
 }
 
-void lock_preemption(lock_level_type *lock_level, return_code_type *return_code){
-
+void lock_preemption(lock_level_type *lock_level, return_code_type *return_code)
+{
 }
 
-void unlock_preemption(lock_level_type *lock_level, return_code_type *return_code){
-
+void unlock_preemption(lock_level_type *lock_level, return_code_type *return_code)
+{
 }
 
-void get_my_id(process_id_type *process_id, return_code_type *return_code){
-
+void get_my_id(process_id_type *process_id, return_code_type *return_code)
+{
 }
 
-void get_process_id(process_name_type process_name, process_id_type *process_id, return_code_type *return_code){
-
+void get_process_id(process_name_type process_name, process_id_type *process_id, return_code_type *return_code)
+{
 }
 
-void get_process_status(process_id_type process_id, process_status_type *process_status, return_code_type *return_code){
-
+void get_process_status(process_id_type process_id, process_status_type *process_status, return_code_type *return_code)
+{
 }
 
-void initialize_process_core_affinity(process_id_type process_id, processor_core_id_type processor_core_id, return_code_type *return_code){
-
+void initialize_process_core_affinity(process_id_type process_id, processor_core_id_type processor_core_id, return_code_type *return_code)
+{
 }
 
-void get_my_processor_core_id(processor_core_id_type *processor_core_id, return_code_type *return_code){
-
+void get_my_processor_core_id(processor_core_id_type *processor_core_id, return_code_type *return_code)
+{
 }
 
-void get_my_index(process_index_type *process_index, return_code_type *return_code){
-
+void get_my_index(process_index_type *process_index, return_code_type *return_code)
+{
 }
