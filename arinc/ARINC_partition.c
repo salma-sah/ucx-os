@@ -59,7 +59,7 @@ void mos_spawn(void *task, uint16_t stack_size, uint16_t* mos_id, return_code_ty
 	return ERR_OK;
 }
 
-void add_partition() {
+void add_partition(uint16_t mos_id) {
 
 }
 

@@ -68,13 +68,13 @@ typedef struct
     process_state_type process_state;
 } process_status_type;
 
-typedef struct
+struct process_s
 {
-    process_status_type* processus_status;
-    process_attribute_type* attributes;
+    process_status_type *processus_status;
+    process_attribute_type *attributes;
     process_id_type process_id;
     process_index_type process_index;
-} process_type;
+};
 
 extern void create_process(
     /*in */ process_attribute_type *attributes,

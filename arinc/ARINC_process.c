@@ -42,7 +42,7 @@ void create_process(process_attribute_type *attributes, process_id_type *process
         return;
     }
 
-    process_type *new_process = malloc(sizeof(process_type));
+    struct process_s *new_process = malloc(sizeof(struct process_s));
     process_id = ucx_task_idref(task);
 
     new_process->process_id = process_id;
