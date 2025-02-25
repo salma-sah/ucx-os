@@ -42,12 +42,36 @@ typedef struct
        num_cores_type num_assigned_cores;
 } partition_status_type;
 
+/* MOS node */
+struct mos_s {
+	void (*task)(void);
+	jmp_buf context;		/* jmp_buf is architecture specific */
+	size_t *stack;
+	size_t stack_sz;
+	void *rt_prio;
+	uint16_t id;
+	uint16_t delay;
+	uint16_t priority;
+	uint8_t state;
+    struct list_s *partitions;
+};
+
+extern void create_mos(
+    /*out*/ uint16_t* mos_id,
+    /*out*/ return_code_type* return_code);
+
+extern void mos_spawn(
+    /*in*/ void *task, 
+    /*in*/ uint16_t stack_size,
+    /*out*/ uint16_t* mos_id,
+    /*out*/ return_code_type* return_code);
+
 extern void get_partition_status(
     /*out*/ partition_status_type *partition_status,
     /*out*/ return_code_type *return_code);
 
 extern void set_partition_mode(
-    /*in */ operating_mode_type operating_mode,
+    /*in*/ operating_mode_type operating_mode,
     /*out*/ return_code_type *return_code);
 
 extern void get_my_partition_id(

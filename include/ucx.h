@@ -1,5 +1,3 @@
-#define ARINC
-
 #include <hal.h>
 #include <lib/console.h>
 #include <lib/libc.h>
