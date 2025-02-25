@@ -23,6 +23,7 @@ typedef enum
 typedef apex_integer partition_id_type;
 typedef apex_unsigned num_cores_type;
 typedef apex_integer lock_level_type;
+typedef name_type partition_name_type;
 
 typedef enum
 {
@@ -34,14 +35,26 @@ typedef enum
 
 typedef struct
 {
-    system_time_type period;
-    system_time_type duration;
-    partition_id_type identifier;
     lock_level_type lock_level;
     operating_mode_type operating_mode;
-    start_condition_type start_condition;
     num_cores_type num_assigned_cores;
 } partition_status_type;
+
+/*TODO - REMOVE Typically, the partition period is the greatest common factor of the process periods 
+within a partition. If the process periods are harmonic, then this is the period of the 
+process in a partition that has the shortest period. If there are no periodic processes 
+in a partition, then the period is based on the minimum execution frequency required 
+by an application to satisfy its performance requirements.*/
+typedef struct
+{
+    system_time_type period; 
+    system_time_type duration;
+    partition_id_type identifier;
+    partition_name_type name;
+    start_condition_type start_condition;
+} partition_attributs_type;
+
+
 
 /* MOS node */
 struct mos_s
