@@ -20,7 +20,7 @@ typedef enum
 } operating_mode_type;
 
 /* partition_ids originate from the configuration data */
-typedef apex_integer partition_id_type;
+typedef uint16_t partition_id_type;
 typedef apex_unsigned num_cores_type;
 typedef apex_integer lock_level_type;
 typedef name_type partition_name_type;
@@ -87,6 +87,7 @@ struct partition_s
     uint8_t state;
     partition_attributs_type *attributs;
     partition_status_type *status;
+    struct list_s *process;
     sampling_port_s *communication_port;
 };
 
@@ -98,6 +99,19 @@ extern void mos_spawn(
     /*in*/ void *task,
     /*in*/ uint16_t stack_size,
     /*out*/ uint16_t *mos_id,
+    /*out*/ return_code_type *return_code);
+
+extern void partition_spawn(
+    /*in*/void *task, 
+    /*in*/ uint16_t stack_size, 
+    /*in*/ system_address_type *app_adress, 
+    /*out*/ uint16_t *partition_id, 
+    /*out*/ return_code_type *return_code);
+
+extern void add_new_partition(
+    /*in*/ uint16_t mos_id, 
+    /*out*/ system_address_type* app_adress,
+    /*out*/ partition_id_type* partition_id,
     /*out*/ return_code_type *return_code);
 
 extern void trigger_cold_start_mode(

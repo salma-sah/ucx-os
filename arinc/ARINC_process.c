@@ -1,7 +1,7 @@
 #include <ucx.h>
 #include <limits.h>
 
-static struct node_s *idcmp(struct node_s *node, void *id_arg)
+struct node_s *idcmp(struct node_s *node, void *id_arg)
 {
     struct tcb_s *task = node->data;
     uint16_t id = (size_t)id_arg;
