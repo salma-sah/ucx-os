@@ -30,6 +30,11 @@ typedef struct
        validity_type last_msg_validity;
 } sampling_port_status_type;
 
+typedef struct
+{
+       sampling_port_status_type* status;
+} sampling_port_s;
+
 extern void create_sampling_port(
     /*in */ sampling_port_name_type sampling_port_name,
     /*in */ message_size_type max_message_size,

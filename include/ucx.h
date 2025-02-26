@@ -18,3 +18,4 @@
 #include <stdarg.h>
 #include <arinc/ARINC_process.h>
 #include <arinc/ARINC_partition.h>
+#include <arinc/ARINC_sampling_port.h>

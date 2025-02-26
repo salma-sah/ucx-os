@@ -1,4 +1,4 @@
-
+#include <stdbool.h>
 /*----------------------------------------------------------------*/
 /*                                                                */
 /* global constant and type definitions                           */
@@ -50,12 +50,10 @@
 /*  underlying operating system to result in the defined sizes.          */
 
 typedef unsigned char apex_byte; /* 8-bit unsigned  */
-
 typedef int apex_integer; /* 32-bit signed   */
-
 typedef unsigned apex_unsigned; /* 32-bit unsigned */
-
 typedef long long apex_long_integer; /* 64-bit signed   */
+typedef bool apex_boolean; /* 64-bit signed   */
 
 /*  the following types are either 32-bit or 64-bit and will match */
 /*  the processor's native address size.                           */
@@ -85,11 +83,8 @@ typedef char name_type[max_name_length];
 /* the processor (e.g., 32-bits or 64-bits as supported or as configured    */
 /* for a processor).                                                        */
 typedef void(*system_address_type);
-
 typedef apex_byte *message_addr_type;
-
 typedef apex_integer message_size_type;
-
 typedef apex_integer message_range_type;
 
 typedef enum
@@ -111,7 +106,7 @@ typedef apex_long_integer system_time_type;
 
 typedef apex_integer processor_core_id_type;
 
-//TODO review type
+// TODO review type
 #define core_affinity_no_preference <implementation dependent>
 
 #endif
