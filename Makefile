@@ -108,6 +108,10 @@ endif
 	hexdump -v -e '4/1 "%02x" "\n"' $(BUILD_TARGET_DIR)/image.bin > $(BUILD_TARGET_DIR)/code.txt
 
 ## applications
+arinc: rebuild
+	$(CC) $(CFLAGS) -o $(BUILD_APP_DIR)/arinc.o app/arinc.c
+	@$(MAKE) --no-print-directory link
+
 corotine_args: rebuild
 	$(CC) $(CFLAGS) -o $(BUILD_APP_DIR)/corotine_args.o app/corotine_args.c
 	@$(MAKE) --no-print-directory link
