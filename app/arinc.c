@@ -21,7 +21,7 @@ void test_create_process() {
 
     // base_priority too small
     attributes.stack_size = 1024;
-    attributes.base_priority = INT_MIN - 1;
+    attributes.base_priority = -1;
     create_process(&attributes, &process_id, &return_code);
     printf("Test 3 : return_code = %d\n", return_code);
 

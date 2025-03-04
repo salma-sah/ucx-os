@@ -5,7 +5,6 @@
  */
 
 #include <ucx.h>
-#include <arinc.c>
 
 /* main() function, called from the C runtime */
 

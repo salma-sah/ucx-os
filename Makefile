@@ -21,6 +21,7 @@ BUILD_HAL_DIR = $(BUILD_DIR)/hal
 BUILD_DRIVERS_DIR = $(BUILD_DIR)/drivers
 BUILD_KERNEL_DIR = $(BUILD_DIR)/kernel
 BUILD_TARGET_DIR = $(BUILD_DIR)/target
+BUILD_ARINC_DIR = $(BUILD_DIR)/arinc
 
 -include $(BUILD_TARGET_DIR)/target.mak
 -include $(SRC_DIR)/arch/$(ARCH)/arch.mak
@@ -45,6 +46,16 @@ load: serial
 
 debug: serial
 	cat ${SERIAL_DEVICE}
+
+## arinc
+arinc: ARINC_process.o ARINC_partition.o
+
+arinc_process.o: $(SRC_DIR)/arinc/ARINC_process.c
+	$(CC) $(CFLAGS) $(SRC_DIR)/arinc/ARINC_process.c
+
+arinc_partition.o: $(SRC_DIR)/arinc/ARINC_partition.c
+	$(CC) $(CFLAGS) $(SRC_DIR)/arinc/ARINC_partition.c
+
 
 ## kernel
 ucx: incl hal libs ddrivers kernel
@@ -246,7 +257,7 @@ rebuild:
 	find '$(BUILD_APP_DIR)' -type f -name '*.o' -delete
 
 clean:
-	find '$(BUILD_APP_DIR)' '$(BUILD_KERNEL_DIR)' -type f -name '*.o' -delete
+	find '$(BUILD_APP_DIR)' '$(BUILD_KERNEL_DIR)' '$(BUILD_ARINC_DIR)' -type f -name '*.o' -delete
 	find '$(BUILD_TARGET_DIR)' -type f -name '*.o' -delete -o -name '*~' \
 		-delete -o -name 'image.*' -delete -o -name 'code.*' -delete
 	find '$(SRC_DIR)' -type f -name '*.o' -delete
