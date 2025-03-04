@@ -1,4 +1,4 @@
-#include <ARINC_apex_types.h>
+#include "ARINC_apex_types.h"
 
 /*----------------------------------------------------------------*/
 /*                                                                */
@@ -75,10 +75,6 @@ struct process_s
     process_id_type process_id;
     process_index_type process_index;
 };
-
-extern struct node_s *idcmp(
-    /*in */ struct node_s *node,
-    /*in */ void *id_arg);
 
 extern void create_process(
     /*in */ process_attribute_type *attributes,
