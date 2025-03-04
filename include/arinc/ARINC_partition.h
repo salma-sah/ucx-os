@@ -1,4 +1,5 @@
 #include "ARINC_apex_types.h"
+#include "ARINC_sampling_port.h"
 
 /*----------------------------------------------------------------*/
 /*                                                                */
