@@ -5,6 +5,7 @@
  */
 
 #include <ucx.h>
+#include <arinc.c>
 
 /* main() function, called from the C runtime */
 
@@ -12,9 +13,11 @@ int32_t main(void)
 {
 	struct tcb_s *task;
 	int32_t pr;
+	/*
 	uint16_t mos_id;
 	return_code_type return_code;
-
+	partition_id_type first_partition_id;
+	*/
 	_hardware_init();
 
 	printf("UCX/OS v%s boot on %s\n", __VER__, __ARCH__);
@@ -36,8 +39,13 @@ int32_t main(void)
 	if (!kcb->tasks->length)
 		krnl_panic(ERR_NO_TASKS);
 
-	create_mos(&mos_id, &return_code);
-	
+	//TODO REVOIR REFERENCE
+	/*create_mos(&mos_id, &return_code);
+
+	system_address_type fisrt_app = (void*)test_create_process;
+	add_new_partition(mos_id,fisrt_app,&first_partition_id, &return_code);
+	*/
+
 	kcb->preemptive = pr ? 'y' : 'n';
 	kcb->task_current = kcb->tasks->head->next;
 	task = kcb->task_current->data;

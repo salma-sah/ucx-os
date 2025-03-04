@@ -1,5 +1,16 @@
 #include <ucx.h>
 
+static struct node_s *idcmp(struct node_s *node, void *id_arg)
+{
+    struct tcb_s *task = node->data;
+    uint16_t id = (size_t)id_arg;
+
+    if (task->id == id)
+        return node;
+    else
+        return 0;
+}
+
 void create_mos(uint16_t *mos_id, return_code_type *return_code)
 {
 	// TODO -Q revoir création de task
@@ -90,7 +101,7 @@ void partition_spawn(void *task, uint16_t stack_size, system_address_type *app_a
 	partition_struct->stack = malloc(stack_size);
 	partition_struct->process = list_create();
 
-	// TODO : add : statutus, attributs, communication ports
+	// TODO : add : status, attributs, communication ports
 
 	if (!partition_struct->stack)
 		krnl_panic(ERR_STACK_ALLOC);
