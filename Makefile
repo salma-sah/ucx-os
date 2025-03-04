@@ -48,7 +48,12 @@ debug: serial
 	cat ${SERIAL_DEVICE}
 
 ## arinc
-arinc: ARINC_process.o ARINC_partition.o
+arinc-app: incl arinc apps
+	mv *.o $(SRC_DIR)/build/arinc
+	$(AR) $(ARFLAGS) $(BUILD_TARGET_DIR)/arincapps.a \
+		$(BUILD_ARINC_DIR)/*.o
+
+arinc: arinc_process.o arinc_partition.o
 
 arinc_process.o: $(SRC_DIR)/arinc/ARINC_process.c
 	$(CC) $(CFLAGS) $(SRC_DIR)/arinc/ARINC_process.c
