@@ -56,7 +56,7 @@ void mos_spawn(void *task, uint16_t stack_size, uint16_t *mos_id, return_code_ty
 
 	CRITICAL_LEAVE();
 
-	mos_id = new_mos->id;
+	*mos_id = new_mos->id;
 	memset(new_mos->stack, 0x69, stack_size);
 	memset(new_mos->stack, 0x33, 4);
 	memset((new_mos->stack) + stack_size - 4, 0x33, 4);
@@ -69,7 +69,7 @@ void mos_spawn(void *task, uint16_t stack_size, uint16_t *mos_id, return_code_ty
 
 	new_mos->state = TASK_READY;
 
-	return ERR_OK;
+	*return_code = NO_ERROR;
 }
 
 void partition_spawn(void *task, uint16_t stack_size, system_address_type *app_adress, uint16_t *partition_id, return_code_type *return_code)
@@ -108,7 +108,7 @@ void partition_spawn(void *task, uint16_t stack_size, system_address_type *app_a
 
 	CRITICAL_LEAVE();
 
-	partition_id = partition_struct->id;
+	*partition_id = partition_struct->id;
 	memset(partition_struct->stack, 0x69, stack_size);
 	memset(partition_struct->stack, 0x33, 4);
 	memset((partition_struct->stack) + stack_size - 4, 0x33, 4);
@@ -121,7 +121,7 @@ void partition_spawn(void *task, uint16_t stack_size, system_address_type *app_a
 
 	partition_struct->state = TASK_READY;
 
-	return ERR_OK;
+	*return_code = NO_ERROR;
 }
 
 void add_new_partition(uint16_t mos_id, system_address_type *app_adress, partition_id_type *partition_id, return_code_type *return_code)

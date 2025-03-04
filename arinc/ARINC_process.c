@@ -23,12 +23,12 @@ void create_process(process_attribute_type *attributes, process_id_type *process
         || attributes->period > LLONG_MAX
         || attributes->time_capacity < LLONG_MIN
         || attributes->time_capacity > LLONG_MAX){
-            return_code = INVALID_PARAM;
+            *return_code = INVALID_PARAM;
             return;
         }
 
     if (attributes->time_capacity > attributes->period) {
-        return_code = INVALID_PARAM;
+        *return_code = INVALID_PARAM;
         return;
     }
 
@@ -38,14 +38,14 @@ void create_process(process_attribute_type *attributes, process_id_type *process
     int32_t err_code = ucx_task_spawn(task, attributes->stack_size);
 
     if (err_code != ERR_OK) {
-        return_code = NOT_AVAILABLE;
+        *return_code = NOT_AVAILABLE;
         return;
     }
 
     struct process_s *new_process = malloc(sizeof(struct process_s));
-    process_id = ucx_task_idref(task);
+    *process_id = ucx_task_idref(task);
 
-    new_process->process_id = process_id;
+    new_process->process_id = *process_id;
     new_process->attributes = attributes;
 
     size_t index_next = kcb->id_next;
@@ -65,7 +65,7 @@ void create_process(process_attribute_type *attributes, process_id_type *process
     new_process->processus_status = process_status;
 
     // TODO revoir process_core_id
-    initialize_process_core_affinity(process_id, return_code, 0);
+    initialize_process_core_affinity(*process_id, 0, return_code);
 }
 
 void set_priority(process_id_type process_id, priority_type priority, return_code_type *return_code)
@@ -125,7 +125,7 @@ void get_process_status(process_id_type process_id, process_status_type *process
 
 void initialize_process_core_affinity(process_id_type process_id, processor_core_id_type processor_core_id, return_code_type *return_code)
 {
-    return_code = NO_ERROR;
+    *return_code = NO_ERROR;
 }
 
 void get_my_processor_core_id(processor_core_id_type *processor_core_id, return_code_type *return_code)
