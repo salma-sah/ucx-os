@@ -51,7 +51,7 @@ void create_process(process_attribute_type *attributes, process_id_type *process
     size_t index_next = kcb->id_next;
     new_process->process_index = --index_next;
 
-    struct tcb_s *process_tcb = list_foreach(kcb->tasks, idcmp, (void *)(size_t)process_id)->data;
+    struct tcb_s *process_tcb = list_foreach(kcb->tasks, idcmp, (void *)(size_t)*process_id)->data;
 
     // TODO -Q revoir les conversions de types
     process_tcb->priority = (uint16_t)attributes->base_priority;

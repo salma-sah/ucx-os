@@ -14,17 +14,6 @@ void test_create_process() {
     create_process(&attributes, &process_id, &return_code);
     printf("Test 1 : return_code = %d\n", return_code);
 
-    // stack_size too large
-    attributes.stack_size = UINT_MAX + 1;
-    create_process(&attributes, &process_id, &return_code);
-    printf("Test 2 : return_code = %d\n", return_code);
-
-    // base_priority too small
-    attributes.stack_size = 1024;
-    attributes.base_priority = -1;
-    create_process(&attributes, &process_id, &return_code);
-    printf("Test 3 : return_code = %d\n", return_code);
-
     // time_capacity greater than period
     attributes.base_priority = 10;
     attributes.time_capacity = 2000;

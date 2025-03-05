@@ -48,12 +48,7 @@ debug: serial
 	cat ${SERIAL_DEVICE}
 
 ## arinc
-arinc-app: incl arinc apps
-	mv *.o $(SRC_DIR)/build/arinc
-	$(AR) $(ARFLAGS) $(BUILD_TARGET_DIR)/arincapps.a \
-		$(BUILD_ARINC_DIR)/*.o
-
-arinc: arinc_process.o arinc_partition.o
+arinclayer: arinc_process.o arinc_partition.o
 
 arinc_process.o: $(SRC_DIR)/arinc/ARINC_process.c
 	$(CC) $(CFLAGS) $(SRC_DIR)/arinc/ARINC_process.c
@@ -63,7 +58,7 @@ arinc_partition.o: $(SRC_DIR)/arinc/ARINC_partition.c
 
 
 ## kernel
-ucx: incl hal libs ddrivers kernel
+ucx: incl hal libs ddrivers kernel arinclayer
 	mv *.o $(SRC_DIR)/build/kernel
 	$(AR) $(ARFLAGS) $(BUILD_TARGET_DIR)/libucxos.a \
 		$(BUILD_KERNEL_DIR)/*.o
