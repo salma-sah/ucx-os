@@ -17,7 +17,7 @@ void create_mos(uint16_t *mos_id, return_code_type *return_code)
 	void *task = malloc(sizeof(void));
 
 	// TODO -Q vérifier la taille
-	stack_size_type stack_size = 4 * 1024 * 1024;
+	stack_size_type stack_size = 65535;
 
 	mos_spawn(task, stack_size, mos_id, return_code);
 }
@@ -130,7 +130,7 @@ void add_new_partition(uint16_t mos_id, system_address_type *app_adress, partiti
 	void *task = malloc(sizeof(void));
 
 	// TODO -Q vérifier la taille
-	stack_size_type stack_size = 1024 * 1024;
+	stack_size_type stack_size = 1024;
 
 	partition_spawn(task, stack_size, app_adress, partition_id, return_code);
 
