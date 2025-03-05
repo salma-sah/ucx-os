@@ -48,7 +48,7 @@ debug: serial
 	cat ${SERIAL_DEVICE}
 
 ## arinc
-arinclayer: arinc_process.o arinc_partition.o
+arinclayer: arinc_process.o arinc_partition.o arinc_mos.o
 
 arinc_process.o: $(SRC_DIR)/arinc/ARINC_process.c
 	$(CC) $(CFLAGS) $(SRC_DIR)/arinc/ARINC_process.c
@@ -56,6 +56,8 @@ arinc_process.o: $(SRC_DIR)/arinc/ARINC_process.c
 arinc_partition.o: $(SRC_DIR)/arinc/ARINC_partition.c
 	$(CC) $(CFLAGS) $(SRC_DIR)/arinc/ARINC_partition.c
 
+arinc_mos.o: $(SRC_DIR)/arinc/ARINC_mos.c
+	$(CC) $(CFLAGS) $(SRC_DIR)/arinc/ARINC_mos.c
 
 ## kernel
 ucx: incl hal libs ddrivers kernel arinclayer

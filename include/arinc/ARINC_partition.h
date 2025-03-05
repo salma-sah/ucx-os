@@ -35,21 +35,6 @@ typedef enum
     hm_partition_restart = 3
 } start_condition_type;
 
-/* MOS node */
-struct mos_s
-{
-    void (*task)(void);
-    jmp_buf context; /* jmp_buf is architecture specific */
-    size_t *stack;
-    size_t stack_sz;
-    void *rt_prio;
-    uint16_t id;
-    uint16_t delay;
-    uint16_t priority;
-    uint8_t state;
-    struct list_s *partitions;
-};
-
 typedef struct
 {
     lock_level_type lock_level;
@@ -92,16 +77,6 @@ struct partition_s
     sampling_port_s *communication_port;
 };
 
-extern void create_mos(
-    /*out*/ uint16_t *mos_id,
-    /*out*/ return_code_type *return_code);
-
-extern void mos_spawn(
-    /*in*/ void *task,
-    /*in*/ uint16_t stack_size,
-    /*out*/ uint16_t *mos_id,
-    /*out*/ return_code_type *return_code);
-
 extern void partition_spawn(
     /*in*/void *task, 
     /*in*/ uint16_t stack_size, 
@@ -113,22 +88,6 @@ extern void add_new_partition(
     /*in*/ uint16_t mos_id, 
     /*out*/ system_address_type* app_adress,
     /*out*/ partition_id_type* partition_id,
-    /*out*/ return_code_type *return_code);
-
-extern void trigger_cold_start_mode(
-    /*in*/ partition_id_type partition_id,
-    /*out*/ return_code_type *return_code);
-
-extern void trigger_warm_start_mode(
-    /*in*/ partition_id_type partition_id,
-    /*out*/ return_code_type *return_code);
-
-extern void trigger_normal_mode(
-    /*in*/ partition_id_type partition_id,
-    /*out*/ return_code_type *return_code);
-
-extern void trigger_idle_mode(
-    /*in*/ partition_id_type partition_id,
     /*out*/ return_code_type *return_code);
 
 extern void get_partition_status(
