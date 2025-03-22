@@ -32,6 +32,8 @@ extern void mos_spawn(
     /*out*/ uint16_t *mos_id,
     /*out*/ return_code_type *return_code);
 
+extern void schedule_partitions();
+
 extern void trigger_cold_start_mode(
     /*in*/ partition_id_type partition_id,
     /*out*/ return_code_type *return_code);

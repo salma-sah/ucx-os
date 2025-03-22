@@ -87,7 +87,6 @@ extern void partition_spawn(
     /*out*/ return_code_type *return_code);
 
 extern void add_new_partition(
-    /*in*/ uint16_t mos_id, 
     /*out*/ system_address_type* app_adress,
     /*out*/ partition_id_type* partition_id,
     /*out*/ return_code_type *return_code);

@@ -1,20 +1,9 @@
 #include <ucx.h>
 
-static struct node_s *idcmp(struct node_s *node, void *id_arg)
-{
-	struct tcb_s *task = node->data;
-	uint16_t id = (size_t)id_arg;
-
-	if (task->id == id)
-		return node;
-	else
-		return 0;
-}
-
 void create_mos(uint16_t *mos_id, return_code_type *return_code)
 {
 	// TODO -Q revoir création de task
-	void *task = schedule_partitions;
+	void *task = (void*)schedule_partitions;
 
 	// TODO -Q vérifier la taille
 	stack_size_type stack_size = 65535;

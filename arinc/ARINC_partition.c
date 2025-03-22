@@ -68,7 +68,7 @@ void add_new_partition(system_address_type *app_adress, partition_id_type *parti
 	// TODO -Q revoir création de task
 	void *task = malloc(sizeof(void));
 	if(!task) {
-		return_code = NOT_AVAILABLE;
+		*return_code = NOT_AVAILABLE;
 		return;
 	}
 	task = app_adress;	
@@ -77,7 +77,7 @@ void add_new_partition(system_address_type *app_adress, partition_id_type *parti
 
 	partition_spawn(task, stack_size, app_adress, partition_id, return_code);
 
-	uint16_t mos_id = kcb->mos_id;
+	uint16_t mos_id = kcb->mos_struct->id;
 	struct mos_s *mos_struct = list_foreach(kcb->tasks, idcmp, (void *)(size_t)mos_id)->data;
 	list_insert(mos_struct->partitions, mos_struct->partitions->tail, partition_id);
 }
