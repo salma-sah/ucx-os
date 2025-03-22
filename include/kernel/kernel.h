@@ -37,6 +37,7 @@ struct kcb_s {
 	volatile uint32_t ticks;
 	uint16_t id_next;
 	char preemptive;
+	struct mos_s *mos_struct;
 };
 
 extern struct kcb_s *kcb;

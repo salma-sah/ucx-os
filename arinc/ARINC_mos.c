@@ -1,9 +1,20 @@
 #include <ucx.h>
 
+static struct node_s *idcmp(struct node_s *node, void *id_arg)
+{
+	struct tcb_s *task = node->data;
+	uint16_t id = (size_t)id_arg;
+
+	if (task->id == id)
+		return node;
+	else
+		return 0;
+}
+
 void create_mos(uint16_t *mos_id, return_code_type *return_code)
 {
 	// TODO -Q revoir création de task
-	void *task = malloc(sizeof(void));
+	void *task = schedule_partitions;
 
 	// TODO -Q vérifier la taille
 	stack_size_type stack_size = 65535;
@@ -33,6 +44,9 @@ void mos_spawn(void *task, uint16_t stack_size, uint16_t *mos_id, return_code_ty
 	new_mos->delay = 0;
 	new_mos->stack_sz = stack_size;
 	new_mos->id = kcb->id_next++;
+
+	kcb->mos_struct = new_mos;
+
 	new_mos->state = TASK_STOPPED;
 
 	// TODO -Q vérifier prio
@@ -60,6 +74,52 @@ void mos_spawn(void *task, uint16_t stack_size, uint16_t *mos_id, return_code_ty
 
 	*return_code = NO_ERROR;
 }
+
+void partition_timer_cb(partition_id_type partition_id)
+{
+    printf("Partition %d time window expired\n", partition_id);
+}
+
+void start_partition_timer(struct partition_s *partition)
+{
+    if (!partition)
+        return;
+
+    partition->timer_id = ucx_timer_create(partition_timer_cb, partition->time_window);
+    if (partition->timer_id >= 0)
+    {
+        ucx_timer_start(partition->timer_id, TIMER_ONESHOT);
+    }
+}
+
+static struct node_s *exec_partition(struct node_s *node, void *arg)
+{
+    if (!node || !node->data)
+        return NULL;
+
+    struct partition_s *partition = (struct partition_s *)node->data;
+
+    ucx_timer_cancel((uint16_t)partition->timer_id);
+
+    printf("Switching to partition %d\n", partition->id);
+
+    start_partition_timer(partition);
+
+    return NULL;
+}
+
+void schedule_partitions()
+{
+    struct mos_s *mos_struct = kcb->mos_struct;
+    if (!mos_struct || !mos_struct->partitions)
+        return;
+
+    while (true)
+    {
+        list_foreach(mos_struct->partitions, exec_partition, NULL);
+    }
+}
+
 
 void trigger_cold_start_mode(partition_id_type partition_id, return_code_type *return_code)
 {

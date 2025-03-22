@@ -59,7 +59,7 @@ typedef struct
 } partition_attributs_type;
 
 /* Partition struct */
-// TODO add Partition Health Monitor Table
+// TODO add Partition Health Monitor Table + remplacer time_window par period
 struct partition_s
 {
     void (*task)(void);
@@ -71,6 +71,8 @@ struct partition_s
     uint16_t delay;
     uint16_t priority;
     uint8_t state;
+    uint32_t time_window;
+    uint16_t timer_id;
     partition_attributs_type *attributs;
     partition_status_type *status;
     struct list_s *process;

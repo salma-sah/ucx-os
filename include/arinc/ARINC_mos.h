@@ -19,6 +19,7 @@ struct mos_s
     uint16_t priority;
     uint8_t state;
     struct list_s *partitions;
+    partition_id_type* current_partition;
 };
 
 extern void create_mos(
