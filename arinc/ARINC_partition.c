@@ -7,7 +7,7 @@ void activate_current_partition_processes()
 
     struct node_s *node = partition->processes->head;
     while (node) {
-        process_id_type process_id = node->data;
+        process_id_type process_id = (process_id_type)node->data;
         ucx_task_resume(process_id);
         node = node->next;
     }
@@ -20,21 +20,10 @@ void deactivate_current_partition_processes()
 
     struct node_s *node = partition->processes->head;
     while (node) {
-        process_id_type process_id = node->data;
+        process_id_type process_id = (process_id_type)node->data;
         ucx_task_suspend(process_id);
         node = node->next;
     }
-}
-
-static struct node_s *idcmp(struct node_s *node, void *id_arg)
-{
-    struct tcb_s *task = node->data;
-    uint16_t id = (size_t)id_arg;
-
-    if (task->id == id)
-        return node;
-    else
-        return 0;
 }
 
 void partition_spawn(void *task, uint16_t stack_size, system_address_type *app_adress, uint16_t *partition_id, return_code_type *return_code)

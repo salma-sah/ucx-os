@@ -1,4 +1,5 @@
 #include "ARINC_apex_types.h"
+#include "ARINC_partition.h"
 
 /*----------------------------------------------------------------*/
 /*                                                                */
