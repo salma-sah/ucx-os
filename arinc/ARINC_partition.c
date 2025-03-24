@@ -1,5 +1,37 @@
 #include <ucx.h>
 
+void activate_current_partition_processes()
+{
+    struct partition_s *partition = kcb->mos_struct->current_partition;
+    if (!partition) return;
+
+    struct node_s *node = partition->processes->head;
+    while (node) {
+        struct process_s *process = node->data;
+        if (process->processus_status->process_state == DORMANT) {
+            ucx_task_resume(process->process_id);
+            process->processus_status->process_state = READY;
+        }
+        node = node->next;
+    }
+}
+
+void deactivate_current_partition_processes()
+{
+    struct partition_s *partition = kcb->mos_struct->current_partition;
+    if (!partition) return;
+
+    struct node_s *node = partition->processes->head;
+    while (node) {
+        struct process_s *process = node->data;
+        if (process->processus_status->process_state == READY) {
+            ucx_task_suspend(process->process_id);
+            process->processus_status->process_state = DORMANT;
+        }
+        node = node->next;
+    }
+}
+
 static struct node_s *idcmp(struct node_s *node, void *id_arg)
 {
     struct tcb_s *task = node->data;
@@ -59,7 +91,7 @@ void partition_spawn(void *task, uint16_t stack_size, system_address_type *app_a
 	printf("MOS TASK : task %d: 0x%p, stack: 0x%p, size %d\n", partition_struct->id,
 		   partition_struct->task, partition_struct->stack, partition_struct->stack_sz);
 
-	partition_struct->state = TASK_READY;
+	partition_struct->state = TASK_STOPPED;
 
 	*return_code = NO_ERROR;
 }
@@ -67,7 +99,7 @@ void partition_spawn(void *task, uint16_t stack_size, system_address_type *app_a
 void add_new_partition(system_address_type *app_adress, partition_id_type *partition_id, return_code_type *return_code)
 {
 	// TODO -Q revoir création de task
-	void *task = malloc(sizeof(void));
+	void *task = (void*)activate_current_partition_processes;
 	if(!task) {
 		*return_code = NOT_AVAILABLE;
 		return;
@@ -93,4 +125,9 @@ void set_partition_mode(operating_mode_type operating_mode, return_code_type *re
 
 void get_my_partition_id(partition_id_type *partition_id, return_code_type *return_code)
 {
+	*partition_id = kcb->mos_struct->current_partition->id;
+	if (partition_id)
+		*return_code = NO_ERROR;
+	else
+		*return_code = NOT_AVAILABLE;
 }

@@ -66,7 +66,7 @@ void mos_spawn(void *task, uint16_t stack_size, uint16_t *mos_id, return_code_ty
 void *partition_timer_cb(void *arg)
 {
     partition_id_type partition_id = *(partition_id_type *)arg;
-	desactivate_partition_processes();
+	deactivate_current_partition_processes(partition_id);
 	ucx_task_suspend(partition_id);
     printf("Partition %d time window expired\n", partition_id);
 	return NULL;
