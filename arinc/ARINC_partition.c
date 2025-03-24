@@ -41,6 +41,7 @@ void partition_spawn(void *task, uint16_t stack_size, system_address_type *app_a
 	partition_struct->process = list_create();
 
 	// TODO : add : status, attributs, communication ports
+	partition_struct->time_window = 1000;
 
 	if (!partition_struct->stack)
 		krnl_panic(ERR_STACK_ALLOC);
@@ -79,7 +80,7 @@ void add_new_partition(system_address_type *app_adress, partition_id_type *parti
 
 	uint16_t mos_id = kcb->mos_struct->id;
 	struct mos_s *mos_struct = list_foreach(kcb->tasks, idcmp, (void *)(size_t)mos_id)->data;
-	list_insert(mos_struct->partitions, mos_struct->partitions->tail, partition_id);
+	list_insert(mos_struct->partitions, mos_struct->partitions->head, partition_id);
 }
 
 void get_partition_status(partition_status_type *partition_status, return_code_type *return_code)

@@ -64,10 +64,13 @@ void mos_spawn(void *task, uint16_t stack_size, uint16_t *mos_id, return_code_ty
 	*return_code = NO_ERROR;
 }
 
-void partition_timer_cb(partition_id_type partition_id)
+void *partition_timer_cb(void *arg)
 {
+    partition_id_type partition_id = *(partition_id_type *)arg;
     printf("Partition %d time window expired\n", partition_id);
+	return NULL;
 }
+
 
 void start_partition_timer(struct partition_s *partition)
 {
