@@ -38,7 +38,7 @@ void partition_spawn(void *task, uint16_t stack_size, system_address_type *app_a
 	// TODO -Q vérifier prio
 	partition_struct->priority = TASK_REALTIME_PRIO;
 	partition_struct->stack = malloc(stack_size);
-	partition_struct->process = list_create();
+	partition_struct->processes = list_create();
 
 	// TODO : add : status, attributs, communication ports
 	partition_struct->time_window = 1000;

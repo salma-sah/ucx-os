@@ -32,8 +32,11 @@ void create_process(process_attribute_type *attributes, process_id_type *process
         return;
     }
 
-    // TODO -Q adapater avec entry point ?
-    void *task = malloc(sizeof(void));
+    void *task = attributes->entry_point;
+    if (!task) {
+        *return_code = NOT_AVAILABLE;
+        return;
+    }
 
     int32_t err_code = ucx_task_spawn(task, attributes->stack_size);
 

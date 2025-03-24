@@ -75,7 +75,7 @@ struct partition_s
     uint16_t timer_id;
     partition_attributs_type *attributs;
     partition_status_type *status;
-    struct list_s *process;
+    struct list_s *processes;
     sampling_port_s *communication_port;
 };
 

@@ -2,7 +2,6 @@
 
 void create_mos(uint16_t *mos_id, return_code_type *return_code)
 {
-	// TODO -Q revoir création de task
 	void *task = (void*)schedule_partitions;
 
 	// TODO -Q vérifier la taille
@@ -60,43 +59,32 @@ void mos_spawn(void *task, uint16_t stack_size, uint16_t *mos_id, return_code_ty
 		   new_mos->task, new_mos->stack, new_mos->stack_sz);
 
 	new_mos->state = TASK_READY;
-
 	*return_code = NO_ERROR;
 }
 
 void *partition_timer_cb(void *arg)
 {
     partition_id_type partition_id = *(partition_id_type *)arg;
+	ucx_task_suspend(partition_id);
     printf("Partition %d time window expired\n", partition_id);
 	return NULL;
 }
 
-
-void start_partition_timer(struct partition_s *partition)
-{
-    if (!partition)
-        return;
-
-    partition->timer_id = ucx_timer_create(partition_timer_cb, partition->time_window);
-    if (partition->timer_id >= 0)
-    {
-        ucx_timer_start(partition->timer_id, TIMER_ONESHOT);
-    }
-}
-
-static struct node_s *exec_partition(struct node_s *node, void *arg)
+struct node_s *exec_partition(struct node_s *node, void *arg)
 {
     if (!node || !node->data)
         return NULL;
 
     struct partition_s *partition = (struct partition_s *)node->data;
 
-    ucx_timer_cancel((uint16_t)partition->timer_id);
-
     printf("Switching to partition %d\n", partition->id);
 
-    start_partition_timer(partition);
-
+    partition->timer_id = ucx_timer_create(partition_timer_cb, partition->time_window);
+    if (partition->timer_id >= 0)
+    {
+        ucx_timer_start(partition->timer_id, TIMER_ONESHOT);
+		ucx_task_resume(partition->id);
+    }
     return NULL;
 }
 
@@ -111,7 +99,6 @@ void schedule_partitions()
         list_foreach(mos_struct->partitions, exec_partition, NULL);
     }
 }
-
 
 void trigger_cold_start_mode(partition_id_type partition_id, return_code_type *return_code)
 {
