@@ -41,6 +41,7 @@ void mos_spawn(void *task, uint16_t stack_size, uint16_t *mos_id, return_code_ty
 	new_mos->priority = TASK_REALTIME_PRIO;
 	new_mos->stack = malloc(stack_size);
 	new_mos->partitions = list_create();
+	new_mos->current_partition = NULL;
 
 	if (!new_mos->stack)
 		krnl_panic(ERR_STACK_ALLOC);
@@ -65,6 +66,7 @@ void mos_spawn(void *task, uint16_t stack_size, uint16_t *mos_id, return_code_ty
 void *partition_timer_cb(void *arg)
 {
     partition_id_type partition_id = *(partition_id_type *)arg;
+	desactivate_partition_processes();
 	ucx_task_suspend(partition_id);
     printf("Partition %d time window expired\n", partition_id);
 	return NULL;
@@ -79,12 +81,13 @@ struct node_s *exec_partition(struct node_s *node, void *arg)
 
     printf("Switching to partition %d\n", partition->id);
 
-    partition->timer_id = ucx_timer_create(partition_timer_cb, partition->time_window);
-    if (partition->timer_id >= 0)
-    {
-        ucx_timer_start(partition->timer_id, TIMER_ONESHOT);
-		ucx_task_resume(partition->id);
-    }
+	if (!partition->timer_id)
+    	partition->timer_id = ucx_timer_create(partition_timer_cb, partition->time_window);
+
+	kcb->mos_struct->current_partition = partition;
+	ucx_timer_start(partition->timer_id, TIMER_ONESHOT);
+	ucx_task_resume(partition->id);
+
     return NULL;
 }
 
@@ -99,6 +102,7 @@ void schedule_partitions()
         list_foreach(mos_struct->partitions, exec_partition, NULL);
     }
 }
+
 
 void trigger_cold_start_mode(partition_id_type partition_id, return_code_type *return_code)
 {
