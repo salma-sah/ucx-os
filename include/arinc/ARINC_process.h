@@ -78,6 +78,7 @@ struct process_s
 
 extern void create_process(
     /*in */ process_attribute_type *attributes,
+    /*in*/ partition_id_type partition_id,
     /*out*/ process_id_type *process_id,
     /*out*/ return_code_type *return_code);
 

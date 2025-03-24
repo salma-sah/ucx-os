@@ -12,7 +12,7 @@ static struct node_s *idcmp(struct node_s *node, void *id_arg)
         return 0;
 }
 
-void create_process(process_attribute_type *attributes, process_id_type *process_id, return_code_type *return_code)
+void create_process(process_attribute_type *attributes, partition_id_type partition_id, process_id_type *process_id, return_code_type *return_code)
 {
     //1 TODO tenir compte des autres process de la partition
 
@@ -66,6 +66,9 @@ void create_process(process_attribute_type *attributes, process_id_type *process
     process_status->deadline_time = attributes->time_capacity;
     process_status->current_priority = attributes->base_priority;
     new_process->processus_status = process_status;
+
+	struct partition_s *partition = list_foreach(kcb->mos_struct->partitions, idcmp, (void *)(size_t)partition_id)->data;
+    list_insert(partition->processes, partition->processes->head, process_id);
 
     // TODO revoir process_core_id
     initialize_process_core_affinity(*process_id, 0, return_code);

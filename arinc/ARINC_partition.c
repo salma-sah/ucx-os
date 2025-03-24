@@ -7,11 +7,8 @@ void activate_current_partition_processes()
 
     struct node_s *node = partition->processes->head;
     while (node) {
-        struct process_s *process = node->data;
-        if (process->processus_status->process_state == DORMANT) {
-            ucx_task_resume(process->process_id);
-            process->processus_status->process_state = READY;
-        }
+        process_id_type process_id = node->data;
+        ucx_task_resume(process_id);
         node = node->next;
     }
 }
@@ -23,11 +20,8 @@ void deactivate_current_partition_processes()
 
     struct node_s *node = partition->processes->head;
     while (node) {
-        struct process_s *process = node->data;
-        if (process->processus_status->process_state == READY) {
-            ucx_task_suspend(process->process_id);
-            process->processus_status->process_state = DORMANT;
-        }
+        process_id_type process_id = node->data;
+        ucx_task_suspend(process_id);
         node = node->next;
     }
 }
@@ -96,7 +90,7 @@ void partition_spawn(void *task, uint16_t stack_size, system_address_type *app_a
 	*return_code = NO_ERROR;
 }
 
-void add_new_partition(system_address_type *app_adress, partition_id_type *partition_id, return_code_type *return_code)
+void add_new_partition(partition_id_type *partition_id, return_code_type *return_code)
 {
 	// TODO -Q revoir création de task
 	void *task = (void*)activate_current_partition_processes;
@@ -104,15 +98,14 @@ void add_new_partition(system_address_type *app_adress, partition_id_type *parti
 		*return_code = NOT_AVAILABLE;
 		return;
 	}
-	task = app_adress;	
+	system_address_type *app_adress = task;
+
 	// TODO -Q vérifier la taille
 	stack_size_type stack_size = 1024;
-
+	
 	partition_spawn(task, stack_size, app_adress, partition_id, return_code);
 
-	uint16_t mos_id = kcb->mos_struct->id;
-	struct mos_s *mos_struct = list_foreach(kcb->tasks, idcmp, (void *)(size_t)mos_id)->data;
-	list_insert(mos_struct->partitions, mos_struct->partitions->head, partition_id);
+	list_insert(kcb->mos_struct->partitions, kcb->mos_struct->partitions->head, partition_id);
 }
 
 void get_partition_status(partition_status_type *partition_status, return_code_type *return_code)

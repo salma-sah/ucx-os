@@ -86,6 +86,10 @@ extern void partition_spawn(
     /*out*/ uint16_t *partition_id, 
     /*out*/ return_code_type *return_code);
 
+extern void deactivate_current_partition_processes();
+
+extern void activate_current_partition_processes();
+
 extern void add_new_partition(
     /*out*/ system_address_type* app_adress,
     /*out*/ partition_id_type* partition_id,
