@@ -71,7 +71,7 @@ void partition_spawn(void *task, uint16_t stack_size, system_address_type *app_a
 	_context_init(&partition_struct->context, (size_t)partition_struct->stack,
 				  stack_size, (size_t)task);
 
-	printf("MOS TASK : task %d: 0x%p, stack: 0x%p, size %d\n", partition_struct->id,
+	printf("PARTITION TASK : task %d: 0x%p, stack: 0x%p, size %d\n", partition_struct->id,
 		   partition_struct->task, partition_struct->stack, partition_struct->stack_sz);
 
 	partition_struct->state = TASK_STOPPED;

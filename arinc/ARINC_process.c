@@ -31,14 +31,7 @@ void create_process(process_attribute_type *attributes, partition_id_type partit
         *return_code = INVALID_PARAM;
         return;
     }
-
-    void *task = attributes->entry_point;
-    if (!task) {
-        *return_code = NOT_AVAILABLE;
-        return;
-    }
-
-    int32_t err_code = ucx_task_spawn(task, attributes->stack_size);
+    int32_t err_code = ucx_task_spawn(attributes->entry_point, attributes->stack_size);
 
     if (err_code != ERR_OK) {
         *return_code = NOT_AVAILABLE;
@@ -46,7 +39,7 @@ void create_process(process_attribute_type *attributes, partition_id_type partit
     }
 
     struct process_s *new_process = malloc(sizeof(struct process_s));
-    *process_id = ucx_task_idref(task);
+    *process_id = ucx_task_idref(attributes->entry_point);
 
     new_process->process_id = *process_id;
     new_process->attributes = attributes;
