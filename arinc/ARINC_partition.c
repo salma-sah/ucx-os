@@ -95,6 +95,7 @@ void add_new_partition(partition_id_type *partition_id, return_code_type *return
 	partition_spawn(task, stack_size, app_adress, partition_id, return_code);
 
 	list_insert(kcb->mos_struct->partitions, kcb->mos_struct->partitions->head, partition_id);
+	printf("Partition added ID %d\n", kcb->mos_struct->partitions->head->next->data);
 }
 
 void get_partition_status(partition_status_type *partition_status, return_code_type *return_code)

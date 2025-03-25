@@ -1,12 +1,25 @@
 #include <ucx.h>
 #include <limits.h>
 
-static struct node_s *idcmp(struct node_s *node, void *id_arg)
+static struct node_s *find_task(struct node_s *node, void *id_arg)
 {
     struct tcb_s *task = node->data;
     uint16_t id = (size_t)id_arg;
 
     if (task->id == id)
+        return node;
+    else
+        return 0;
+}
+
+static struct node_s *find_partition(struct node_s *node, void *id_arg)
+{
+    partition_id_type id = *(partition_id_type*)node->data;
+    partition_id_type id_to_find = (size_t)id_arg;
+
+    printf("ID original %d\n", id);
+    printf("ID to find %d\n", id_to_find);
+    if (id_to_find == id)
         return node;
     else
         return 0;
@@ -47,7 +60,7 @@ void create_process(process_attribute_type *attributes, partition_id_type partit
     size_t index_next = kcb->id_next;
     new_process->process_index = --index_next;
 
-    struct tcb_s *process_tcb = list_foreach(kcb->tasks, idcmp, (void *)(size_t)*process_id)->data;
+    struct tcb_s *process_tcb = list_foreach(kcb->tasks, find_task, (void *)(size_t)*process_id)->data;
 
     // TODO -Q revoir les conversions de types
     process_tcb->priority = (uint16_t)attributes->base_priority;
@@ -60,9 +73,10 @@ void create_process(process_attribute_type *attributes, partition_id_type partit
     process_status->current_priority = attributes->base_priority;
     new_process->processus_status = process_status;
 
-	struct partition_s *partition = list_foreach(kcb->mos_struct->partitions, idcmp, (void *)(size_t)partition_id)->data;
+	struct partition_s *partition = list_foreach(kcb->mos_struct->partitions, find_partition, (void *)(size_t)partition_id)->data;
+    printf("PARTITION FOUND\n");
     list_insert(partition->processes, partition->processes->head, process_id);
-
+    printf("PROCESS ADDED\n");
     // TODO revoir process_core_id
     initialize_process_core_affinity(*process_id, 0, return_code);
 }

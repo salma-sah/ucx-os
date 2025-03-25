@@ -99,6 +99,7 @@ void schedule_partitions()
 
     while (true)
     {
+		printf("While loop\n");
         list_foreach(mos_struct->partitions, exec_partition, NULL);
     }
 }
