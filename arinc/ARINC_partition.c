@@ -26,7 +26,7 @@ void deactivate_current_partition_processes()
     }
 }
 
-void partition_spawn(void *task, uint16_t stack_size, system_address_type *app_adress, uint16_t *partition_id, return_code_type *return_code)
+struct partition_s* partition_spawn(void *task, uint16_t stack_size, system_address_type *app_adress, uint16_t *partition_id, return_code_type *return_code)
 {
 	struct partition_s *partition_struct;
 	struct node_s *new_partition;
@@ -75,6 +75,7 @@ void partition_spawn(void *task, uint16_t stack_size, system_address_type *app_a
 		   partition_struct->task, partition_struct->stack, partition_struct->stack_sz);
 
 	partition_struct->state = TASK_STOPPED;
+	return partition_struct;
 
 	*return_code = NO_ERROR;
 }
@@ -92,10 +93,10 @@ void add_new_partition(partition_id_type *partition_id, return_code_type *return
 	// TODO -Q vérifier la taille
 	stack_size_type stack_size = 1024;
 	
-	partition_spawn(task, stack_size, app_adress, partition_id, return_code);
+	struct partition_s* partition_created = partition_spawn(task, stack_size, app_adress, partition_id, return_code);
 
-	list_insert(kcb->mos_struct->partitions, kcb->mos_struct->partitions->head, partition_id);
-	printf("Partition added ID %d\n", kcb->mos_struct->partitions->head->next->data);
+	list_insert(kcb->mos_struct->partitions, kcb->mos_struct->partitions->head, partition_created);
+	printf("Partition added lEN %d\n", kcb->mos_struct->partitions->length);
 }
 
 void get_partition_status(partition_status_type *partition_status, return_code_type *return_code)
