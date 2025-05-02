@@ -1,6 +1,7 @@
 # this is stuff specific to this architecture
 ARCH_DIR = $(SRC_DIR)/arch/$(ARCH)
-INC_DIRS = -I $(ARCH_DIR)
+INC_DIRS = -I $(ARCH_DIR) \
+	-I $(ARCH_DIR)/drivers
 
 # core speed
 F_CLK = 25000000
@@ -39,4 +40,14 @@ hal:
 		$(ARCH_DIR)/interrupt.c \
 		$(ARCH_DIR)/../../common/muldiv.c \
 		$(ARCH_DIR)/../../common/ieee754.c \
-		$(ARCH_DIR)/../../common/math.c
+		$(ARCH_DIR)/../../common/math.c \
+		$(ARCH_DIR)/drivers/usart.c \
+		$(ARCH_DIR)/drivers/gpio_ll.c \
+		$(ARCH_DIR)/drivers/pwm_ll.c
+		
+loadbin: serial
+	echo "u" > ${SERIAL_DEVICE}
+	sleep 1
+	cat ${BUILD_TARGET_DIR}/image.bin > ${SERIAL_DEVICE}
+	sleep 5
+	echo "b" > ${SERIAL_DEVICE}

@@ -1,4 +1,4 @@
-VERSION = 0.95
+VERSION = 0.97
 
 TARGET_LIST = \
 	'arm/stm32f401_blackpill' 'arm/stm32f411_blackpill' \
@@ -27,8 +27,9 @@ BUILD_ARINC_DIR = $(BUILD_DIR)/arinc
 -include $(SRC_DIR)/arch/$(ARCH)/arch.mak
 -include $(SRC_DIR)/drivers/drivers.mak
 INC_DIRS += -I $(SRC_DIR)/include -I $(SRC_DIR)/include/lib \
-	-I $(SRC_DIR)/drivers/include -I $(SRC_DIR)/arch/common
-CFLAGS += -D__VER__=\"$(VERSION)\"
+	-I $(SRC_DIR)/drivers/bus/include -I $(SRC_DIR)/drivers/device/include \
+	-I $(SRC_DIR)/arch/common
+CFLAGS += -D__VER__=\"$(VERSION)\" #-DALT_ALLOCATOR
 
 incl:
 ifeq ('$(ARCH)', 'none')
@@ -121,24 +122,29 @@ endif
 	hexdump -v -e '4/1 "%02x" "\n"' $(BUILD_TARGET_DIR)/image.bin > $(BUILD_TARGET_DIR)/code.txt
 
 ## applications
+<<<<<<< HEAD
 arinc: rebuild
 	$(CC) $(CFLAGS) -o $(BUILD_APP_DIR)/arinc.o app/arinc.c
 	@$(MAKE) --no-print-directory link
 
 corotine_args: rebuild
 	$(CC) $(CFLAGS) -o $(BUILD_APP_DIR)/corotine_args.o app/corotine_args.c
+=======
+coroutine_args: rebuild
+	$(CC) $(CFLAGS) -o $(BUILD_APP_DIR)/coroutine_args.o app/coroutine_args.c
+>>>>>>> version/main
 	@$(MAKE) --no-print-directory link
 	
-corotine_mq: rebuild
-	$(CC) $(CFLAGS) -o $(BUILD_APP_DIR)/corotine_mq.o app/corotine_mq.c
+coroutine_mq: rebuild
+	$(CC) $(CFLAGS) -o $(BUILD_APP_DIR)/coroutine_mq.o app/coroutine_mq.c
 	@$(MAKE) --no-print-directory link
 
-corotine_pipe: rebuild
-	$(CC) $(CFLAGS) -o $(BUILD_APP_DIR)/corotine_pipe.o app/corotine_pipe.c
+coroutine_pipe: rebuild
+	$(CC) $(CFLAGS) -o $(BUILD_APP_DIR)/coroutine_pipe.o app/coroutine_pipe.c
 	@$(MAKE) --no-print-directory link
 
-corotine_task: rebuild
-	$(CC) $(CFLAGS) -o $(BUILD_APP_DIR)/corotine_task.o app/corotine_task.c
+coroutine_task: rebuild
+	$(CC) $(CFLAGS) -o $(BUILD_APP_DIR)/coroutine_task.o app/coroutine_task.c
 	@$(MAKE) --no-print-directory link
 
 delay: rebuild
@@ -154,12 +160,32 @@ echo: rebuild
 	$(CC) $(CFLAGS) -o $(BUILD_APP_DIR)/echo.o app/echo.c
 	@$(MAKE) --no-print-directory link
 
+gpio_blink: rebuild
+	$(CC) $(CFLAGS) -o $(BUILD_APP_DIR)/gpio_blink.o app/gpio_blink.c
+	@$(MAKE) --no-print-directory link
+
+gpio_blinkseq: rebuild
+	$(CC) $(CFLAGS) -o $(BUILD_APP_DIR)/gpio_blinkseq.o app/gpio_blinkseq.c
+	@$(MAKE) --no-print-directory link
+
+gpio_blinkseqkey: rebuild
+	$(CC) $(CFLAGS) -o $(BUILD_APP_DIR)/gpio_blinkseqkey.o app/gpio_blinkseqkey.c
+	@$(MAKE) --no-print-directory link
+	
+gpio_int: rebuild
+	$(CC) $(CFLAGS) -o $(BUILD_APP_DIR)/gpio_int.o app/gpio_int.c
+	@$(MAKE) --no-print-directory link
+
 hello: rebuild
 	$(CC) $(CFLAGS) -o $(BUILD_APP_DIR)/hello.o app/hello.c
 	@$(MAKE) --no-print-directory link
 
 hello_p: rebuild
 	$(CC) $(CFLAGS) -o $(BUILD_APP_DIR)/hello_preempt.o app/hello_preempt.c
+	@$(MAKE) --no-print-directory link
+
+i2c_eeprom: rebuild
+	$(CC) $(CFLAGS) -o $(BUILD_APP_DIR)/i2c_eeprom.o app/i2c_eeprom.c
 	@$(MAKE) --no-print-directory link
 	
 i2c_master: rebuild
@@ -206,12 +232,28 @@ progress: rebuild
 	$(CC) $(CFLAGS) -o $(BUILD_APP_DIR)/progress.o app/progress.c
 	@$(MAKE) --no-print-directory link
 
+pwm_blink: rebuild
+	$(CC) $(CFLAGS) -o $(BUILD_APP_DIR)/pwm_blink.o app/pwm_blink.c
+	@$(MAKE) --no-print-directory link
+	
+rtsched: rebuild
+	$(CC) $(CFLAGS) -o $(BUILD_APP_DIR)/rtsched.o app/rtsched.c
+	@$(MAKE) --no-print-directory link
+
 spi_master: rebuild
 	$(CC) $(CFLAGS) -o $(BUILD_APP_DIR)/spi_master.o app/spi_master.c
 	@$(MAKE) --no-print-directory link
 	
 spi_slave: rebuild
 	$(CC) $(CFLAGS) -o $(BUILD_APP_DIR)/spi_slave.o app/spi_slave.c
+	@$(MAKE) --no-print-directory link
+	
+spi_periph: rebuild
+	$(CC) $(CFLAGS) -o $(BUILD_APP_DIR)/spi_periph.o app/spi_periph.c
+	@$(MAKE) --no-print-directory link
+	
+spi_eeprom: rebuild
+	$(CC) $(CFLAGS) -o $(BUILD_APP_DIR)/spi_eeprom.o app/spi_eeprom.c
 	@$(MAKE) --no-print-directory link
 	
 suspend: rebuild
@@ -252,6 +294,10 @@ scall_suspend: rebuild
 	
 vt100_term: rebuild
 	$(CC) $(CFLAGS) -o $(BUILD_APP_DIR)/vt100_term.o app/vt100_term.c
+	@$(MAKE) --no-print-directory link
+	
+vt100_term_ioctl: rebuild
+	$(CC) $(CFLAGS) -o $(BUILD_APP_DIR)/vt100_term_ioctl.o app/vt100_term_ioctl.c
 	@$(MAKE) --no-print-directory link
 
 # clean and rebuild rules

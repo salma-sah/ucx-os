@@ -32,7 +32,6 @@ struct kcb_s {
 	struct node_s *task_current;
 	jmp_buf context;
 	int32_t (*rt_sched)(void);
-	struct queue_s *events;
 	struct list_s *timer_lst;
 	volatile uint32_t ticks;
 	uint16_t id_next;
@@ -66,6 +65,7 @@ void ucx_task_delay(uint16_t ticks);
 int32_t ucx_task_suspend(uint16_t id);
 int32_t ucx_task_resume(uint16_t id);
 int32_t ucx_task_priority(uint16_t id, uint16_t priority);
+int32_t ucx_task_rt_priority(uint16_t id, void *priority);
 uint16_t ucx_task_id();
 int32_t ucx_task_idref(void *task);
 void ucx_task_wfi();

@@ -10,7 +10,6 @@ struct kcb_s kernel_state = {
 	.tasks = 0,
 	.task_current = 0,
 	.rt_sched = krnl_noop_rtsched,
-	.events = 0,
 	.timer_lst = 0,
 	.id_next = 0,
 	.ticks = 0
@@ -74,10 +73,10 @@ void krnl_panic(uint32_t ecode)
 	int err;
 	
 	_di();
-	printf("\n*** HALT (%08x) - ", ecode);
+	printf("\n*** HALT (%d)", ecode);
 	for (err = 0; perror[err].ecode != ERR_UNKNOWN; err++)
 		if (perror[err].ecode == ecode) break;
-	printf("%s\n", perror[err].desc);
+	printf(" - %s\n", perror[err].desc);
 	
 	for (;;);
 }
@@ -125,7 +124,7 @@ uint16_t krnl_schedule(void)
 			if (itcnt++ > KRNL_SCHED_IMAX)
 				krnl_panic(ERR_NO_TASKS);
 
-		} while (task->state != TASK_READY);
+		} while (task->state != TASK_READY || task->rt_prio);
 	} while (--task->priority & 0xff);
 	
 	task->priority |= (task->priority >> 8) & 0xff;
@@ -214,6 +213,7 @@ int32_t ucx_task_spawn(void *task, uint16_t stack_size)
 	
 	new_task->data = new_tcb;
 	new_tcb->task = task;
+	new_tcb->rt_prio = 0;
 	new_tcb->delay = 0;
 	new_tcb->stack_sz = stack_size;
 	new_tcb->id = kcb->id_next++;
@@ -377,6 +377,30 @@ int32_t ucx_task_priority(uint16_t id, uint16_t priority)
 	return ERR_OK;
 }
 
+int32_t ucx_task_rt_priority(uint16_t id, void *priority)
+{
+	struct node_s *node;
+	struct tcb_s *task;
+
+	if (!priority)
+		return ERR_TASK_INVALID_PRIO;
+
+	CRITICAL_ENTER();
+	node = list_foreach(kcb->tasks, idcmp, (void *)(size_t)id);
+	
+	if (!node) {
+		CRITICAL_LEAVE();
+		
+		return ERR_TASK_NOT_FOUND;
+	}
+
+	task = node->data;
+	task->rt_prio = priority;
+	CRITICAL_LEAVE();
+
+	return ERR_OK;
+}
+
 uint16_t ucx_task_id()
 {
 	struct tcb_s *task = kcb->task_current->data;
@@ -407,6 +431,9 @@ int32_t ucx_task_idref(void *task)
 void ucx_task_wfi()
 {
 	volatile uint32_t s;
+	
+	if (kcb->preemptive == 'n')
+		return;
 	
 	s = kcb->ticks;
 	while (s == kcb->ticks);

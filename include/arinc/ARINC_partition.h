@@ -79,7 +79,7 @@ struct partition_s
     sampling_port_s *communication_port;
 };
 
-extern void partition_spawn(
+extern struct partition_s* partition_spawn(
     /*in*/void *task, 
     /*in*/ uint16_t stack_size, 
     /*in*/ system_address_type *app_adress, 

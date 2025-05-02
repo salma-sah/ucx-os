@@ -45,7 +45,9 @@ hal:
 	$(CC) $(CFLAGS) \
 		$(ARCH_DIR)/../stm32f401_blackpill/hal.c \
 		$(ARCH_DIR)/../stm32f401_blackpill/usart.c \
-		$(ARCH_DIR)/../stm32f401_blackpill/drivers/stm32_i2c.c \
+		$(ARCH_DIR)/../stm32f401_blackpill/drivers/gpio_ll.c \
+		$(ARCH_DIR)/../stm32f401_blackpill/drivers/i2c_ll.c \
+		$(ARCH_DIR)/../stm32f401_blackpill/drivers/pwm_ll.c \
 		$(ARCH_DIR)/../../common/muldiv.c \
 		$(ARCH_DIR)/../../common/ieee754.c \
 		$(ARCH_DIR)/../../common/math.c \
@@ -80,4 +82,4 @@ usb_load:
 	cat ${SERIAL_DEV}
 
 flash:
-	dfu-util -a 0 -s 0x08000000 -D build/target/image.bin
+	dfu-util -a 0 -s 0x08000000:leave -D build/target/image.bin
