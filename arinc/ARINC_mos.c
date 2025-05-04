@@ -84,6 +84,11 @@ void *partition_timer_cb(void *arg)
 	return NULL;
 }
 
+void mos_execution() {
+	while(true)
+		schedule_partitions();
+}
+
 int32_t schedule_partitions()
 {
     struct list_s *partitions = kcb->mos_struct->partitions;
