@@ -5,12 +5,13 @@ void activate_current_partition_processes()
     struct partition_s *partition = kcb->mos_struct->current_partition;
     if (!partition) return;
 
-    struct node_s *node = partition->processes->head;
-    while (node) {
-        process_id_type process_id = (process_id_type)node->data;
-        ucx_task_resume(process_id);
-        node = node->next;
-    }
+	printf("PARTITION %d ACTIVATED\n", partition->id);
+    // struct node_s *node = partition->processes->head;
+    // while (node) {
+    //     process_id_type process_id = (process_id_type)node->data;
+    //     ucx_task_resume(process_id);
+    //     node = node->next;
+    // }
 }
 
 void deactivate_current_partition_processes()
@@ -45,13 +46,14 @@ struct partition_s* partition_spawn(void *task, uint16_t stack_size, system_addr
 
 	new_partition->data = partition_struct;
 	partition_struct->task = task;
-	partition_struct->delay = 0;
+	partition_struct->delay = 1;
 	partition_struct->stack_sz = stack_size;
 	partition_struct->id = kcb->id_next++;
 	partition_struct->state = TASK_STOPPED;
 
 	// TODO -Q vérifier prio
 	partition_struct->priority = TASK_REALTIME_PRIO;
+	partition_struct->rt_prio = 0;
 	partition_struct->stack = malloc(stack_size);
 	partition_struct->processes = list_create();
 
@@ -109,7 +111,8 @@ void set_partition_mode(operating_mode_type operating_mode, return_code_type *re
 
 void get_my_partition_id(partition_id_type *partition_id, return_code_type *return_code)
 {
-	*partition_id = kcb->mos_struct->current_partition->id;
+	struct partition_s* my_partition = kcb->mos_struct->current_partition->data;
+	partition_id_type *partition_id = my_partition->id;
 	if (partition_id)
 		*return_code = NO_ERROR;
 	else

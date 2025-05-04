@@ -1,4 +1,14 @@
 #include <ucx.h>
+static struct node_s *find_timer(struct node_s *node, void *id_arg)
+{
+    struct timer_s *timer = node->data;
+    uint16_t id = (size_t)id_arg;
+
+    if (timer->timer_id == id)
+        return node;
+    else
+        return 0;
+}
 
 void create_mos(uint16_t *mos_id, return_code_type *return_code)
 {
@@ -22,6 +32,7 @@ void mos_spawn(void *task, uint16_t stack_size, uint16_t *mos_id, return_code_ty
 
 	CRITICAL_ENTER();
 
+	kcb->rt_sched = schedule_partitions;
 	new_task = list_pushback(kcb->tasks, new_mos);
 
 	if (!new_task)
@@ -39,6 +50,7 @@ void mos_spawn(void *task, uint16_t stack_size, uint16_t *mos_id, return_code_ty
 
 	// TODO -Q vérifier prio
 	new_mos->priority = TASK_REALTIME_PRIO;
+	new_mos->rt_prio = 0;
 	new_mos->stack = malloc(stack_size);
 	new_mos->partitions = list_create();
 	new_mos->current_partition = NULL;
@@ -72,37 +84,43 @@ void *partition_timer_cb(void *arg)
 	return NULL;
 }
 
-struct node_s *exec_partition(struct node_s *node, void *arg)
+int32_t schedule_partitions()
 {
-    if (!node || !node->data)
-        return NULL;
+    struct list_s *partitions = kcb->mos_struct->partitions;
+    if (!partitions)
+        return -1;
 
-    struct partition_s *partition = (struct partition_s *)node->data;
+	struct tcb_s *partition_task = kcb->task_current->data;
+	if (partition_task->state == TASK_RUNNING)
+		partition_task->state = TASK_READY;
+	
+	struct node_s* partition_node;
+	struct partition_s* partition;
 
-    printf("Switching to partition %d\n", partition->id);
+	if (!kcb->mos_struct->current_partition) {
+		kcb->mos_struct->current_partition = partitions->head;
+		partition_node = partitions->head;
+		partition = partition_node->data;
+		partition->timer_id = ucx_timer_create(partition_timer_cb, partition->time_window);
+		ucx_timer_start(partition->timer_id, TIMER_ONESHOT);
+	}
+	else {
+		partition_node = kcb->mos_struct->current_partition;
+		partition = partition_node->data;
+		struct timer_s* timer = list_foreach(kcb->ticks, find_timer, (void *)(size_t) partition->timer_id)->data;
+		if (timer->countdown == 0){
+			kcb->mos_struct->current_partition = kcb->mos_struct->current_partition->next;
+			partition_node = kcb->mos_struct->current_partition->next;
+			partition = partition_node->data;
+			kcb->mos_struct->current_partition = partition_node;
+		}
+	}
 
-	if (!partition->timer_id)
-    	partition->timer_id = ucx_timer_create(partition_timer_cb, partition->time_window);
-
-	kcb->mos_struct->current_partition = partition;
-	ucx_timer_start(partition->timer_id, TIMER_ONESHOT);
-	ucx_task_resume(partition->id);
-
-    return NULL;
+	kcb->task_current = partition_node;
+	partition_task->state = TASK_RUNNING;
+	
+	return partition->id;
 }
-
-void schedule_partitions()
-{
-    struct mos_s *mos_struct = kcb->mos_struct;
-    if (!mos_struct || !mos_struct->partitions)
-        return;
-
-    while (true)
-    {
-        list_foreach(mos_struct->partitions, exec_partition, NULL);
-    }
-}
-
 
 void trigger_cold_start_mode(partition_id_type partition_id, return_code_type *return_code)
 {

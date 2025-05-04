@@ -19,7 +19,7 @@ struct mos_s
     uint16_t priority;
     uint8_t state;
     struct list_s *partitions;
-    struct partition_s* current_partition;
+    struct node_s* current_partition;
 };
 
 extern void create_mos(
@@ -32,7 +32,7 @@ extern void mos_spawn(
     /*out*/ uint16_t *mos_id,
     /*out*/ return_code_type *return_code);
 
-extern void schedule_partitions();
+extern int32_t schedule_partitions();
 
 extern void trigger_cold_start_mode(
     /*in*/ partition_id_type partition_id,
