@@ -32,7 +32,7 @@ void mos_spawn(void *task, uint16_t stack_size, uint16_t *mos_id, return_code_ty
 
 	CRITICAL_ENTER();
 
-	kcb->rt_sched = schedule_partitions;
+	kcb->rt_sched = mos_execution;
 	new_task = list_pushback(kcb->tasks, new_mos);
 
 	if (!new_task)
@@ -115,10 +115,19 @@ int32_t schedule_partitions()
 		partition = partition_node->data;
 		struct timer_s* timer = list_foreach(kcb->timer_lst, find_timer, (void *)(size_t) partition->timer_id)->data;
 		if (timer->countdown == 0){
-			kcb->mos_struct->current_partition = kcb->mos_struct->current_partition->next;
-			partition_node = kcb->mos_struct->current_partition->next;
-			partition = partition_node->data;
-			kcb->mos_struct->current_partition = partition_node;
+			if (kcb->mos_struct->current_partition->next != partitions->tail) {
+				kcb->mos_struct->current_partition = kcb->mos_struct->current_partition->next;
+				partition_node = kcb->mos_struct->current_partition->next;
+				partition = partition_node->data;
+				kcb->mos_struct->current_partition = partition_node;
+			}
+			else {
+				kcb->mos_struct->current_partition = partitions->head;
+				partition_node = partitions->head;
+				partition = partition_node->data;
+				kcb->mos_struct->current_partition = partition_node;
+			}
+			
 		}
 	}
 
