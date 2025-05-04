@@ -17,8 +17,8 @@ static struct node_s *find_partition(struct node_s *node, void *id_arg)
     struct partition_s* partition  = node->data;
     partition_id_type id = (size_t)id_arg;
 
-    printf("ID original %d\n", partition->id);
-    printf("ID to find %d\n", id);
+    //printf("ID original %d\n", partition->id);
+    //printf("ID to find %d\n", id);
     if (partition->id == id)
         return node;
     else
@@ -74,9 +74,9 @@ void create_process(process_attribute_type *attributes, partition_id_type partit
     new_process->processus_status = process_status;
 
 	struct partition_s *partition = list_foreach(kcb->mos_struct->partitions, find_partition, (void *)(size_t)partition_id)->data;
-    printf("PARTITION FOUND ID %d\n", partition->id);
+    //printf("PARTITION FOUND ID %d\n", partition->id);
     list_insert(partition->processes, partition->processes->head, new_process);
-    printf("PROCESS ADDED LEN %d\n", partition->processes->length);
+    //printf("PROCESS ADDED LEN %d\n", partition->processes->length);
     // TODO revoir process_core_id
     initialize_process_core_affinity(*process_id, 0, return_code);
 }

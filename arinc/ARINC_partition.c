@@ -2,7 +2,7 @@
 
 void activate_current_partition_processes()
 {
-    struct partition_s *partition = kcb->mos_struct->current_partition;
+    struct partition_s *partition = kcb->mos_struct->current_partition->data;
     if (!partition) return;
 
 	printf("PARTITION %d ACTIVATED\n", partition->id);
@@ -16,7 +16,7 @@ void activate_current_partition_processes()
 
 void deactivate_current_partition_processes()
 {
-    struct partition_s *partition = kcb->mos_struct->current_partition;
+    struct partition_s *partition = kcb->mos_struct->current_partition->data;
     if (!partition) return;
 
     struct node_s *node = partition->processes->head;
@@ -73,8 +73,8 @@ struct partition_s* partition_spawn(void *task, uint16_t stack_size, system_addr
 	_context_init(&partition_struct->context, (size_t)partition_struct->stack,
 				  stack_size, (size_t)task);
 
-	printf("PARTITION TASK : task %d: 0x%p, stack: 0x%p, size %d\n", partition_struct->id,
-		   partition_struct->task, partition_struct->stack, partition_struct->stack_sz);
+	// printf("PARTITION TASK : task %d: 0x%p, stack: 0x%p, size %d\n", partition_struct->id,
+	// 	   partition_struct->task, partition_struct->stack, partition_struct->stack_sz);
 
 	partition_struct->state = TASK_STOPPED;
 	return partition_struct;
@@ -112,7 +112,7 @@ void set_partition_mode(operating_mode_type operating_mode, return_code_type *re
 void get_my_partition_id(partition_id_type *partition_id, return_code_type *return_code)
 {
 	struct partition_s* my_partition = kcb->mos_struct->current_partition->data;
-	partition_id_type *partition_id = my_partition->id;
+	partition_id = (partition_id_type*) my_partition->id;
 	if (partition_id)
 		*return_code = NO_ERROR;
 	else

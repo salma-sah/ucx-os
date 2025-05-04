@@ -50,7 +50,7 @@ void mos_spawn(void *task, uint16_t stack_size, uint16_t *mos_id, return_code_ty
 
 	// TODO -Q vérifier prio
 	new_mos->priority = TASK_REALTIME_PRIO;
-	new_mos->rt_prio = 0;
+	new_mos->rt_prio = 1;
 	new_mos->stack = malloc(stack_size);
 	new_mos->partitions = list_create();
 	new_mos->current_partition = NULL;
@@ -68,8 +68,8 @@ void mos_spawn(void *task, uint16_t stack_size, uint16_t *mos_id, return_code_ty
 	_context_init(&new_mos->context, (size_t)new_mos->stack,
 				  stack_size, (size_t)task);
 
-	printf("MOS TASK : task %d: 0x%p, stack: 0x%p, size %d\n", new_mos->id,
-		   new_mos->task, new_mos->stack, new_mos->stack_sz);
+	// printf("MOS TASK : task %d: 0x%p, stack: 0x%p, size %d\n", new_mos->id,
+	// 	   new_mos->task, new_mos->stack, new_mos->stack_sz);
 
 	new_mos->state = TASK_READY;
 	*return_code = NO_ERROR;
@@ -87,8 +87,9 @@ void *partition_timer_cb(void *arg)
 int32_t schedule_partitions()
 {
     struct list_s *partitions = kcb->mos_struct->partitions;
-    if (!partitions)
-        return -1;
+    if (!partitions) {
+		return -1;
+	}
 
 	struct tcb_s *partition_task = kcb->task_current->data;
 	if (partition_task->state == TASK_RUNNING)
@@ -107,7 +108,7 @@ int32_t schedule_partitions()
 	else {
 		partition_node = kcb->mos_struct->current_partition;
 		partition = partition_node->data;
-		struct timer_s* timer = list_foreach(kcb->ticks, find_timer, (void *)(size_t) partition->timer_id)->data;
+		struct timer_s* timer = list_foreach(kcb->timer_lst, find_timer, (void *)(size_t) partition->timer_id)->data;
 		if (timer->countdown == 0){
 			kcb->mos_struct->current_partition = kcb->mos_struct->current_partition->next;
 			partition_node = kcb->mos_struct->current_partition->next;
