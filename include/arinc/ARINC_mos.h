@@ -23,13 +23,11 @@ struct mos_s
 };
 
 extern void create_mos(
-    /*out*/ uint16_t *mos_id,
     /*out*/ return_code_type *return_code);
 
 extern void mos_spawn(
     /*in*/ void *task,
     /*in*/ uint16_t stack_size,
-    /*out*/ uint16_t *mos_id,
     /*out*/ return_code_type *return_code);
 
 extern int32_t schedule_partitions();

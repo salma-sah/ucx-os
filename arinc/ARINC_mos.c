@@ -10,17 +10,17 @@ static struct node_s *find_timer(struct node_s *node, void *id_arg)
         return 0;
 }
 
-void create_mos(uint16_t *mos_id, return_code_type *return_code)
+void create_mos(return_code_type *return_code)
 {
 	void *task = (void*)schedule_partitions;
 
 	// TODO -Q vérifier la taille
 	stack_size_type stack_size = 65535;
 
-	mos_spawn(task, stack_size, mos_id, return_code);
+	mos_spawn(task, stack_size, return_code);
 }
 
-void mos_spawn(void *task, uint16_t stack_size, uint16_t *mos_id, return_code_type *return_code)
+void mos_spawn(void *task, uint16_t stack_size, return_code_type *return_code)
 {
 	struct mos_s *new_mos;
 	struct node_s *new_task;
@@ -60,7 +60,6 @@ void mos_spawn(void *task, uint16_t stack_size, uint16_t *mos_id, return_code_ty
 
 	CRITICAL_LEAVE();
 
-	*mos_id = new_mos->id;
 	memset(new_mos->stack, 0x69, stack_size);
 	memset(new_mos->stack, 0x33, 4);
 	memset((new_mos->stack) + stack_size - 4, 0x33, 4);

@@ -36,13 +36,6 @@ void test_mos_and_partitions_creation() {
 	return_code_type return_code;
 	partition_id_type first_partition_id;
     partition_id_type second_partition_id;
-
-    create_mos(&mos_id, &return_code);
-    if (return_code != NO_ERROR)
-    {
-        printf("[Error] Failed to create MOS\n");
-        return;
-    }
     
 	add_new_partition(&first_partition_id, &return_code);
     if (return_code != NO_ERROR)
