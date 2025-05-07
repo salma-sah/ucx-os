@@ -22,8 +22,6 @@ struct mos_s
     struct node_s* current_partition;
 };
 
-extern void mos_execution();
-
 extern void create_mos(
     /*out*/ uint16_t *mos_id,
     /*out*/ return_code_type *return_code);

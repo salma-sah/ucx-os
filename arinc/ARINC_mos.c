@@ -32,7 +32,7 @@ void mos_spawn(void *task, uint16_t stack_size, uint16_t *mos_id, return_code_ty
 
 	CRITICAL_ENTER();
 
-	kcb->rt_sched = mos_execution;
+	kcb->rt_sched = schedule_partitions;
 	new_task = list_pushback(kcb->tasks, new_mos);
 
 	if (!new_task)
