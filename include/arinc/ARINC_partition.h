@@ -72,7 +72,7 @@ struct partition_s
     uint16_t priority;
     uint8_t state;
     uint32_t time_window;
-    uint16_t timer_id;
+    int32_t timer_id;
     partition_attributs_type *attributs;
     partition_status_type *status;
     struct list_s *processes;

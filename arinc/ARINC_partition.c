@@ -6,12 +6,12 @@ void activate_current_partition_processes()
     if (!partition) return;
 
 	printf("PARTITION %d ACTIVATED\n", partition->id);
-    // struct node_s *node = partition->processes->head;
-    // while (node) {
-    //     process_id_type process_id = (process_id_type)node->data;
-    //     ucx_task_resume(process_id);
-    //     node = node->next;
-    // }
+    struct node_s *node = partition->processes->head;
+    while (node) {
+        process_id_type process_id = (process_id_type)node->data;
+        ucx_task_resume(process_id);
+        node = node->next;
+    }
 }
 
 void deactivate_current_partition_processes()
@@ -98,7 +98,7 @@ void add_new_partition(partition_id_type *partition_id, return_code_type *return
 	struct partition_s* partition_created = partition_spawn(task, stack_size, app_adress, partition_id, return_code);
 
 	list_insert(kcb->mos_struct->partitions, kcb->mos_struct->partitions->head, partition_created);
-	printf("Partition added lEN %d\n", kcb->mos_struct->partitions->length);
+	//printf("Partition added lEN %d\n", kcb->mos_struct->partitions->length);
 }
 
 void get_partition_status(partition_status_type *partition_status, return_code_type *return_code)

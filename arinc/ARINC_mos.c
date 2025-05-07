@@ -84,11 +84,6 @@ void *partition_timer_cb(void *arg)
 	return NULL;
 }
 
-void mos_execution() {
-	while(true)
-		schedule_partitions();
-}
-
 int32_t schedule_partitions()
 {
     struct list_s *partitions = kcb->mos_struct->partitions;
@@ -113,21 +108,29 @@ int32_t schedule_partitions()
 	else {
 		partition_node = kcb->mos_struct->current_partition;
 		partition = partition_node->data;
-		struct timer_s* timer = list_foreach(kcb->timer_lst, find_timer, (void *)(size_t) partition->timer_id)->data;
-		if (timer->countdown == 0){
-			if (kcb->mos_struct->current_partition->next != partitions->tail) {
-				kcb->mos_struct->current_partition = kcb->mos_struct->current_partition->next;
-				partition_node = kcb->mos_struct->current_partition->next;
-				partition = partition_node->data;
-				kcb->mos_struct->current_partition = partition_node;
+		struct node_s* timer_node = list_foreach(kcb->timer_lst, find_timer, (void *)partition->timer_id);
+		if (timer_node) {
+			struct timer_s* timer = timer_node->data;
+			if (timer->countdown == 0){
+				if (kcb->mos_struct->current_partition->next != partitions->tail) {
+					kcb->mos_struct->current_partition = kcb->mos_struct->current_partition->next;
+					partition_node = kcb->mos_struct->current_partition->next;
+					partition = partition_node->data;
+					kcb->mos_struct->current_partition = partition_node;
+				}
+				else {
+					kcb->mos_struct->current_partition = partitions->head;
+					partition_node = partitions->head;
+					partition = partition_node->data;
+					kcb->mos_struct->current_partition = partition_node;
+				}
+				partition->timer_id = ucx_timer_create(partition_timer_cb, partition->time_window);
+				ucx_timer_start(partition->timer_id, TIMER_ONESHOT);
+				
 			}
-			else {
-				kcb->mos_struct->current_partition = partitions->head;
-				partition_node = partitions->head;
-				partition = partition_node->data;
-				kcb->mos_struct->current_partition = partition_node;
-			}
-			
+		}
+		else {
+			krnl_panic(ERR_FAIL);
 		}
 	}
 
