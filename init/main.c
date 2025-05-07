@@ -34,8 +34,6 @@ int32_t main(void)
 	if (!kcb->tasks->length)
 		krnl_panic(ERR_NO_TASKS);
 
-	create_mos(&return_code);
-
 	kcb->preemptive = pr ? 'y' : 'n';
 	kcb->task_current = kcb->tasks->head->next;
 	task = kcb->task_current->data;
